@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creador de Avisos de Llegada</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      background: #0f1115;
+      color: #f2f2f2;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 460px 1fr;
+      min-height: 100vh;
+      background: #0f1115;
+    }
+
+    /* =========================================
+       PANEL IZQUIERDO (HERRAMIENTAS MODERNAS)
+       ========================================= */
+    aside {
+      background: #090b0f;
+      border-right: 1px solid #1f2533;
+      padding: 32px 24px;
+      overflow-y: auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    aside::-webkit-scrollbar { width: 6px; }
+    aside::-webkit-scrollbar-track { background: transparent; }
+    aside::-webkit-scrollbar-thumb { background: #2a3142; border-radius: 10px; }
+    aside::-webkit-scrollbar-thumb:hover { background: #3d475c; }
+
+    .app-header { margin-bottom: 8px; }
+
+    h1 {
+      margin: 0;
+      font-size: 26px;
+      line-height: 1.2;
+      font-weight: 800;
+      background: linear-gradient(135deg, #6bb3ff 0%, #3f7cff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      color: #8f9bad;
+      font-size: 13px;
+      margin: 6px 0 0 0;
+      font-weight: 500;
+    }
+
+    .panel-card {
+      background: #12161f;
+      border: 1px solid #1e2433;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+      font-size: 14px;
+      margin: 0 0 18px 0;
+      color: #ffffff;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    h2::before {
+      content: '';
+      display: block;
+      width: 10px;
+      height: 10px;
+      background: #3f7cff;
+      border-radius: 50%;
+    }
+
+    .input-group { margin-bottom: 16px; }
+    .input-group:last-child { margin-bottom: 0; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .row .input-group { margin-bottom: 0; }
+
+    label {
+      display: block; font-size: 12.5px; color: #9fb7d6;
+      margin-bottom: 6px; font-weight: 600;
+    }
+
+    input, textarea, select {
+      width: 100%; background: #0b0d13; color: #f4f7fb;
+      border: 1px solid #232b3d; border-radius: 8px;
+      padding: 11px 14px; font-size: 13.5px; font-family: inherit; outline: none;
+    }
+
+    input[type="date"] { color-scheme: dark; }
+    textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+    input:focus, textarea:focus, select:focus {
+      border-color: #3f7cff;
+      box-shadow: 0 0 0 3px rgba(63, 124, 255, 0.15);
+    }
+
+    input[type="file"] {
+      padding: 8px; background: rgba(63, 124, 255, 0.05);
+      border: 1px dashed #3f7cff; color: #9fb7d6; cursor: pointer;
+    }
+
+    button {
+      width: 100%; border: none; border-radius: 8px; padding: 12px 16px;
+      cursor: pointer; font-weight: 600; color: #ffffff; font-size: 14px;
+      background: #3f7cff; display: flex; justify-content: center; align-items: center; gap: 8px;
+    }
+    button:hover { background: #2b61d4; }
+    button svg { width: 18px; height: 18px; fill: currentColor; }
+    button.secondary { background: #2a3142; }
+    button.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+    button.copy { background: #10b981; font-size: 15px; padding: 14px; margin-bottom: 8px; }
+    .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+
+    .status {
+      margin-top: 16px; padding: 14px; border-radius: 8px; background: rgba(63, 124, 255, 0.08);
+      color: #6bb3ff; font-size: 13px; border: 1px solid rgba(63, 124, 255, 0.2);
+    }
+    .tools-box small { display: block; margin-top: 10px; color: #8f9bad; font-size: 12px; line-height: 1.4; }
+
+    /* =========================================
+       PANEL DERECHO (ENTORNO CLARO)
+       ========================================= */
+    main {
+      background: #e9ecef; /* Fondo gris claro fuera de la hoja */
+      padding: 30px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .email-subject-wrap {
+      width: 800px;
+      margin-bottom: 16px;
+      background: #ffffff;
+      border: 1px solid #ced4da;
+      border-radius: 8px;
+      padding: 8px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    .email-subject-wrap textarea {
+      display: block; width: 100%; min-height: 42px;
+      background: #f8f9fa; color: #0056b3; border: 1px solid #dee2e6;
+      border-radius: 6px; padding: 10px 14px; font-size: 14.5px; font-weight: 700;
+      outline: none; font-family: Arial, sans-serif;
+    }
+
+    /* La "Hoja de papel" */
+    #notice {
+      width: 800px; /* Ancho fijo para emular documento */
+      background-color: #ffffff; /* FONDO BLANCO PURO PARA OUTLOOK */
+      color: #333333; /* Texto oscuro corporativo */
+      padding: 40px;
+      font-family: Arial, Helvetica, sans-serif;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      border: 1px solid #ced4da;
+    }
+
+    /* Ocultar elementos en impresión */
+    @media print {
+      @page { margin-top: 0; margin-bottom: 0; }
+      aside { display: none; }
+      .app { display: block; }
+      main { padding: 0; background: white; }
+      .email-subject-wrap { display: none; }
+      #notice { box-shadow: none; border: none; padding: 20px; }
+      #vTrackingBtnContainer { display: none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <aside>
+      <div class="app-header">
+        <h1>Creador de Avisos</h1>
+        <p class="subtitle">Herramienta de generación automática</p>
+      </div>
+
+      <div class="panel-card">
+        <h2>1. Cargar Documento BL</h2>
+        <div class="input-group">
+          <input type="file" id="pdfFile" accept="application/pdf" />
+        </div>
+        <button onclick="leerPDF()">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM18 20H6V4h5v6h6v10z"/></svg>
+          Leer BL
+        </button>
+        <div id="status" class="status">Esperando PDF...</div>
+      </div>
+
+      <div class="panel-card">
+        <h2>2. Encabezado</h2>
+        <div class="input-group">
+          <label>Mensaje superior</label>
+          <textarea id="topMessage">Por favor, verificar el BL adjunto y confirmarnos si está correcto para poder proceder.</textarea>
+        </div>
+        <div class="row">
+          <div class="input-group"><label>To</label><input id="to" /></div>
+          <div class="input-group"><label>From</label><input id="from" /></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>3. Datos principales</h2>
+        <div class="row">
+          <div class="input-group"><label>Reference</label><input id="reference" placeholder="Ej.: FL: 226477" /></div>
+          <div class="input-group"><label>OBL</label><input id="obl" /></div>
+        </div>
+        <div class="input-group">
+          <label>Date of Arrival</label>
+          <input id="arrivalDate" type="date" />
+        </div>
+        <div class="input-group">
+          <label>Goods</label>
+          <textarea id="goods"></textarea>
+        </div>
+        <div class="row">
+          <div class="input-group"><label>Voyage Number</label><input id="voyage" /></div>
+          <div class="input-group"><label>No. of pack.</label><input id="packs" /></div>
+        </div>
+        <div class="row">
+          <div class="input-group"><label>Shipping line</label><input id="shippingLine" /></div>
+          <div class="input-group"><label>Weight</label><input id="weight" /></div>
+        </div>
+        <div class="row">
+          <div class="input-group"><label>Origin</label><input id="origin" /></div>
+          <div class="input-group"><label>Volume</label><input id="volume" /></div>
+        </div>
+        <div class="input-group">
+          <label>Destination</label>
+          <input id="destination" />
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>4. Freight Details</h2>
+        <div class="row">
+          <div class="input-group"><label>QTY</label><input id="qty" /></div>
+          <div class="input-group"><label>Volume detalle</label><input id="detailVolume" /></div>
+        </div>
+        <div class="input-group"><label>Package Type</label><textarea id="packageType"></textarea></div>
+        <div class="input-group"><label>Container #</label><textarea id="container"></textarea></div>
+        <div class="input-group"><label>Weight detalle</label><textarea id="detailWeight"></textarea></div>
+        <div class="input-group"><label>Description</label><textarea id="description"></textarea></div>
+        <div class="input-group"><label>Marks & Numbers</label><textarea id="marks"></textarea></div>
+      </div>
+
+      <div class="panel-card">
+        <h2>5. Opciones Extras</h2>
+        <div class="input-group">
+          <label>Link de Rastreo (Opcional)</label>
+          <input id="trackingLink" placeholder="Ej: https://www.cmacgm.com/tracking..." />
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <h2>6. Acciones y Herramientas</h2>
+        <button class="copy" onclick="copiarAvisoCompleto()">
+          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          Copiar aviso completo
+        </button>
+        <div class="button-grid">
+          <button class="danger" onclick="limpiarCampos()">Limpiar</button>
+          <button class="secondary" onclick="window.print()">Imprimir PDF</button>
+        </div>
+        <button class="secondary" onclick="cargarEjemplo()">Cargar ejemplo</button>
+      </div>
+
+      <div class="panel-card tools-box">
+        <h2>Herramientas Adicionales</h2>
+        <div class="input-group">
+          <label>Cargar Logo Definitivo (OBLIGATORIO)</label>
+          <input type="file" id="logoFile" accept="image/*" />
+        </div>
+        <button class="secondary" onclick="cargarLogoDesdeArchivo()">Convertir y Cargar logo</button>
+        <small>Si no cargas el logo por aquí, Outlook lo mostrará como una "X" roja.</small>
+      </div>
+    </aside>
+
+    <main>
+      <div class="email-subject-wrap">
+        <textarea id="emailSubject" rows="1" wrap="soft" placeholder="ARRIVAL NOTICE..."></textarea>
+      </div>
+
+      <div id="notice">
+        
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px; border-bottom: 2px solid #0056b3; padding-bottom: 20px;">
+          <tr>
+            <td width="260" valign="middle" align="left">
+               <img id="logoImg" src="./logo3944.jpg" width="250" alt="NIMEJOS Logo" style="display: block; border: 0;">
+            </td>
+            <td valign="middle" align="left" style="border-left: 2px solid #0056b3; padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #555555; font-family: Arial, sans-serif;">
+               <strong>NIMEJOS LOGÍSTICA</strong><br>
+               Ave. Romulo Betancourt, No. 1852<br>
+               Torre Empresarial RT, Suite 703<br>
+               Mirador Sur, Distrito Nacional<br>
+               Dominican Republic
+            </td>
+          </tr>
+        </table>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+          <tr>
+            <td style="background-color: #fff3f3; border-left: 4px solid #dc3545; color: #dc3545; font-weight: bold; padding: 14px 18px; font-size: 15px; font-family: Arial, sans-serif;" id="vTopMessage">
+            </td>
+          </tr>
+        </table>
+
+        <table width="100%" cellpadding="15" cellspacing="0" border="0" style="background-color: #f8f9fa; border: 1px solid #dee2e6; margin-bottom: 25px; font-family: Arial, sans-serif;">
+          <tr>
+            <td style="font-size: 14.5px; color: #333333; line-height: 1.8;">
+              <span style="color: #6c757d; font-weight: bold; font-size: 13px;">TO :</span> <strong style="color: #0056b3;" id="vTo"></strong><br>
+              <span style="color: #6c757d; font-weight: bold; font-size: 13px;">FROM :</span> <strong id="vFrom"></strong>
+            </td>
+          </tr>
+        </table>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
+          <tr>
+            <td valign="middle">
+              <h2 style="margin: 0; color: #0056b3; font-size: 20px; font-weight: bold; border-left: 5px solid #0056b3; padding-left: 12px; font-family: Arial, sans-serif; text-transform: uppercase;">
+                ARRIVAL NOTICE
+              </h2>
+            </td>
+            <td valign="middle" align="right" id="vTrackingBtnContainer" style="display: none;">
+              <table border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="center" bgcolor="#0056b3" style="border-radius: 4px;">
+                    <a id="vTrackingBtn" href="#" target="_blank" style="font-size: 13px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; font-weight: bold; padding: 12px 18px; display: block; border: 1px solid #0056b3; text-transform: uppercase;">
+                      📍 Rastrear Carga
+                    </a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+
+        <p style="font-size: 14.5px; margin: 20px 0; color: #555555; line-height: 1.6; font-family: Arial, sans-serif;">
+          Good day,<br><br>Following please find details of your shipment arrival as follows:
+        </p>
+
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0; background-color: #f8f9fa; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
+          <tr>
+            <td width="42%" align="center" style="padding: 20px; border-right: 1px dashed #ced4da;">
+              <div style="font-size: 11px; color: #6c757d; text-transform: uppercase; font-weight: bold; margin-bottom: 8px;">Port of Loading</div>
+              <div style="font-size: 16px; font-weight: bold; color: #0056b3;" id="vOrigin"></div>
+            </td>
+            <td width="16%" align="center" style="vertical-align: middle; padding: 10px;">
+              <div style="font-size: 26px; line-height: 1;">🛳️</div>
+              <div style="font-size: 10px; color: #6c757d; font-weight: bold; letter-spacing: 1px; margin-top: 6px;">MARITIME</div>
+            </td>
+            <td width="42%" align="center" style="padding: 20px; border-left: 1px dashed #ced4da;">
+              <div style="font-size: 11px; color: #6c757d; text-transform: uppercase; font-weight: bold; margin-bottom: 8px;">Port of Discharge</div>
+              <div style="font-size: 16px; font-weight: bold; color: #198754;" id="vDestination"></div>
+            </td>
+          </tr>
+        </table>
+
+        <table width="100%" cellpadding="12" cellspacing="0" style="margin-bottom: 30px; border-collapse: collapse; font-size: 14px; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
+          <tr>
+            <td width="18%" bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Reference</td>
+            <td width="32%" id="vReference" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+            <td width="18%" bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">OBL</td>
+            <td width="32%" id="vObl" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+          </tr>
+          <tr>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Date of Arrival</td>
+            <td id="vArrivalDate" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Voyage Number</td>
+            <td id="vVoyage" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+          </tr>
+          <tr>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Shipping line</td>
+            <td id="vShippingLine" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">No. of pack.</td>
+            <td id="vPacks" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+          </tr>
+          <tr>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Weight</td>
+            <td id="vWeight" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Volume</td>
+            <td id="vVolume" style="color: #212529; font-weight: bold; border: 1px solid #dee2e6;"></td>
+          </tr>
+          <tr>
+            <td bgcolor="#f0f4f8" style="color: #495057; font-weight: bold; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Goods</td>
+            <td colspan="3" id="vGoods" style="color: #0056b3; font-weight: bold; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+          </tr>
+        </table>
+
+        <h3 style="font-weight: bold; color: #333333; margin-top: 36px; margin-bottom: 12px; font-size: 16px; text-transform: uppercase; border-bottom: 2px solid #dee2e6; padding-bottom: 8px; font-family: Arial, sans-serif;">
+          Freight Details
+        </h3>
+
+        <table width="100%" cellpadding="12" cellspacing="0" style="border-collapse: collapse; font-size: 13.5px; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
+          <thead>
+            <tr>
+              <th width="5%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">QTY</th>
+              <th width="15%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Package</th>
+              <th width="15%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Container #</th>
+              <th width="10%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Volume</th>
+              <th width="15%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Weight</th>
+              <th width="25%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Description</th>
+              <th width="15%" align="left" bgcolor="#f0f4f8" style="color: #0056b3; border: 1px solid #dee2e6; text-transform: uppercase; font-size: 12px;">Marks</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="vQty" align="right" valign="top" style="color: #198754; font-weight: bold; border: 1px solid #dee2e6;"></td>
+              <td id="vPackageType" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+              <td id="vContainer" valign="top" style="color: #0056b3; font-weight: bold; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+              <td id="vDetailVolume" align="right" valign="top" style="color: #333333; border: 1px solid #dee2e6;"></td>
+              <td id="vDetailWeight" align="right" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+              <td id="vDescription" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+              <td id="vMarks" valign="top" style="color: #555555; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </main>
+  </div>
+
+  <script>
+    const PDFJS_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
+    const PDFJS_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+
+    function el(id) { return document.getElementById(id); }
+    function valor(id) { const campo = el(id); return campo ? campo.value : ""; }
+    function poner(id, texto) { const campo = el(id); if (campo) campo.textContent = texto || ""; }
+
+    function setStatus(texto) {
+      const status = el("status");
+      if (status) status.textContent = texto;
+    }
+
+    function ajustarAltoSujeto() {
+      const campo = el("emailSubject");
+      if (!campo) return;
+      campo.style.height = "42px";
+      campo.style.height = campo.scrollHeight + "px";
+    }
+
+    function llenarCampo(id, texto) {
+      const campo = el(id);
+      if (campo) {
+        campo.value = texto || "";
+        if (id === "emailSubject") {
+          setTimeout(ajustarAltoSujeto, 0);
+        }
+      }
+    }
+
+    function cargarScriptExterno(src) {
+      return new Promise((resolve, reject) => {
+        const existente = document.querySelector('script[src="' + src + '"]');
+        if (existente) {
+          if (existente.dataset.loaded === "true") resolve();
+          else existente.addEventListener("load", resolve, { once: true });
+          return;
+        }
+
+        const script = document.createElement("script");
+        script.src = src;
+        script.onload = () => { script.dataset.loaded = "true"; resolve(); };
+        script.onerror = () => reject(new Error("No se pudo cargar: " + src));
+        document.head.appendChild(script);
+      });
+    }
+
+    async function asegurarPDFJS() {
+      if (!window.pdfjsLib) await cargarScriptExterno(PDFJS_URL);
+      pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+    }
+
+    function cargarLogoDesdeArchivo() {
+      const file = el("logoFile").files[0];
+      if (!file) {
+        setStatus("Seleccione el archivo del logo primero.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function () {
+        el("logoImg").src = reader.result;
+        setStatus("Logo convertido correctamente. ¡Ahora SÍ se verá en Outlook!");
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function limpiarTexto(texto) {
+      return (texto || "").replace(/\s+/g, " ").replace(/\s+([:;,.])/g, "$1").trim();
+    }
+
+    function buscar(texto, patrones) {
+      for (let i = 0; i < patrones.length; i++) {
+        const match = texto.match(patrones[i]);
+        if (match && match[1]) return limpiarTexto(match[1]);
+      }
+      return "";
+    }
+
+    function nombreClienteSolo(texto) {
+      let nombre = limpiarTexto(texto);
+      nombre = nombre.replace(
+        /\s+(C\/|Calle|CALLE|Av\.?|Ave\.?|Avenida|AVENIDA|Carretera|CARRETERA|Km|KM|Sector|SECTOR|No\.?|NO\.?|#|Plaza|PLAZA|Local|LOCAL|Suite|SUITE|Santo Domingo|Dominican Republic|Distrito Nacional|La Altagracia|Higuey|Higüey|Santiago|RNC:|Tax Id:|Phone:|Email:).*$/i,
+        ""
+      ).trim();
+      return nombre;
+    }
+
+    function nombreQuirchSolo(texto) {
+      let nombre = limpiarTexto(texto);
+      if (/quirch/i.test(nombre)) return "QUIRCH FOODS LLC";
+      nombre = nombre.replace(/\s*(2701|Coral Gables|United States|Tax Id:|Phone:|Email:).*$/i, "").replace(/\./g, "").trim();
+      return nombre.toUpperCase();
+    }
+
+    function construirSujetoCorreo(consignatario, bl, hbl, contenedor) {
+      return "ARRIVAL NOTICE ( " +
+        (consignatario || "") +
+        " // BL. " +
+        (bl || "") +
+        " // HBL. " +
+        (hbl || "") +
+        " // CONT. " +
+        (contenedor || "") +
+        " )";
+    }
+
+    function llenarSujetoCorreo(consignatario, bl, hbl, contenedor) {
+      llenarCampo("emailSubject", construirSujetoCorreo(consignatario, bl, hbl, contenedor));
+      ajustarAltoSujeto();
+    }
+
+    function formatearFechaParaAviso(fechaISO) {
+      if (!fechaISO) return "";
+      const partes = fechaISO.split("-");
+      if (partes.length !== 3) return fechaISO;
+      return partes[2] + "/" + partes[1] + "/" + partes[0];
+    }
+
+    function actualizarAviso() {
+      poner("vTopMessage", valor("topMessage"));
+      poner("vTo", valor("to"));
+      poner("vFrom", valor("from"));
+      poner("vReference", valor("reference"));
+      poner("vObl", valor("obl"));
+      poner("vArrivalDate", formatearFechaParaAviso(valor("arrivalDate")));
+      poner("vGoods", valor("goods"));
+      poner("vVoyage", valor("voyage"));
+      poner("vPacks", valor("packs"));
+      poner("vShippingLine", valor("shippingLine"));
+      poner("vWeight", valor("weight"));
+      poner("vOrigin", valor("origin"));
+      poner("vVolume", valor("volume"));
+      poner("vDestination", valor("destination"));
+      poner("vQty", valor("qty"));
+      poner("vPackageType", valor("packageType"));
+      poner("vContainer", valor("container"));
+      poner("vDetailVolume", valor("detailVolume"));
+      poner("vDetailWeight", valor("detailWeight"));
+      poner("vDescription", valor("description"));
+      poner("vMarks", valor("marks"));
+      
+      // Control del Botón de Rastreo para Outlook
+      const trackLink = valor("trackingLink").trim();
+      const trackContainer = el("vTrackingBtnContainer");
+      const trackBtn = el("vTrackingBtn");
+      
+      if (trackLink !== "") {
+        trackBtn.href = trackLink;
+        trackContainer.style.display = "table-cell"; // Para que respete el TD
+      } else {
+        trackBtn.href = "#";
+        trackContainer.style.display = "none";
+      }
+    }
+
+    function prepararHTMLParaOutlook(aviso) {
+      // Tomamos el HTML interior, que ya está puramente estructurado para correo
+      return aviso.innerHTML;
+    }
+
+    async function copiarAvisoCompleto() {
+      try {
+        actualizarAviso();
+
+        const aviso = el("notice");
+        if (!aviso) {
+          setStatus("No se encontró el aviso para copiar.");
+          return;
+        }
+
+        const logo = el("logoImg");
+        if (logo && !logo.src.startsWith("data:image")) {
+          setStatus("⚠️ IMPORTANTE: Recuerde usar el botón 'Cargar Logo Definitivo' en la barra izquierda para que el logo se adjunte correctamente.");
+        } else {
+          setStatus("Preparando aviso corporativo...");
+        }
+
+        const htmlFinal = prepararHTMLParaOutlook(aviso);
+        const textoPlano = aviso.innerText || aviso.textContent || "";
+
+        let copiado = false;
+
+        try {
+          if (navigator.clipboard && window.ClipboardItem) {
+            await navigator.clipboard.write([
+              new ClipboardItem({
+                "text/html": new Blob([htmlFinal], { type: "text/html" }),
+                "text/plain": new Blob([textoPlano], { type: "text/plain" })
+              })
+            ]);
+            copiado = true;
+          }
+        } catch (errorClipboard) {
+          console.warn("Clipboard moderno falló:", errorClipboard);
+          copiado = false;
+        }
+
+        if (!copiado) {
+          const contenedor = document.createElement("div");
+          contenedor.contentEditable = "true";
+          contenedor.style.position = "fixed";
+          contenedor.style.left = "-99999px";
+          contenedor.innerHTML = htmlFinal;
+
+          document.body.appendChild(contenedor);
+          const range = document.createRange();
+          range.selectNodeContents(contenedor);
+          const selection = window.getSelection();
+          selection.removeAllRanges();
+          selection.addRange(range);
+
+          try { copiado = document.execCommand("copy"); } catch (e) {}
+
+          selection.removeAllRanges();
+          document.body.removeChild(contenedor);
+        }
+
+        if (copiado) {
+          setStatus("✅ ¡Copiado con éxito! Ve a Outlook y pégalo (Ctrl+V).");
+          return;
+        }
+
+        setStatus("No se pudo copiar. Intente en Edge o Chrome.");
+      } catch (error) {
+        console.error(error);
+        setStatus("Error copiando aviso: " + error.message);
+      }
+    }
+
+    async function leerPDF() {
+      try {
+        await asegurarPDFJS();
+
+        const file = el("pdfFile").files[0];
+        if (!file) {
+          setStatus("Seleccione un PDF primero.");
+          return;
+        }
+
+        setStatus("Leyendo PDF...");
+
+        const reader = new FileReader();
+
+        reader.onload = async function () {
+          try {
+            const typedarray = new Uint8Array(this.result);
+            const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
+
+            let texto = "";
+
+            for (let i = 1; i <= pdf.numPages; i++) {
+              const page = await pdf.getPage(i);
+              const content = await page.getTextContent();
+              texto += " " + content.items.map(item => item.str).join(" ");
+            }
+
+            texto = limpiarTexto(texto);
+            console.log(texto);
+
+            const freightLoadId = buscar(texto, [
+              /Freight Load Id:\s*([A-Z0-9-]+)/i,
+              /Freight Load\s*Id:\s*([A-Z0-9-]+)/i,
+              /Load Id:\s*([A-Z0-9-]+)/i
+            ]);
+
+            const reference = freightLoadId ? "FL: " + freightLoadId : "";
+
+            const exporterCompleto = buscar(texto, [
+              /EXPORTER .*?\)\s*(.*?)\s*Draft\s*DOCUMENT NUMBER/i,
+              /EXPORTER .*?\)\s*(.*?)\s*DOCUMENT NUMBER/i
+            ]);
+
+            const consigneeCompleto = buscar(texto, [
+              /CONSIGNED TO\s*(.*?)\s*FORWARDING AGENT/i,
+              /NOTIFY PARTY .*?\)\s*(.*?)\s*DOMESTIC ROUTING/i
+            ]);
+
+            const exporter = nombreQuirchSolo(exporterCompleto);
+            const consignee = nombreClienteSolo(consigneeCompleto);
+
+            const documentNumber = buscar(texto, [
+              /DOCUMENT NUMBER\s*B\/L NUMBER\s*([A-Z0-9-]+)/i,
+              /DOCUMENT NUMBER\s*([A-Z0-9-]+)/i
+            ]);
+
+            const hblNumber = buscar(texto, [
+              /DOCUMENT NUMBER\s*B\/L NUMBER\s*[A-Z0-9-]+\s*([A-Z0-9-]+)/i,
+              /B\/L NUMBER\s*([A-Z0-9-]+)/i,
+              /HBL\s*[:#]?\s*([A-Z0-9-]+)/i,
+              /HOUSE\s*B\/L\s*[:#]?\s*([A-Z0-9-]+)/i
+            ]);
+
+            const obl = documentNumber || hblNumber;
+
+            const voyage = buscar(texto, [
+              /VOYAGE\s*([A-Z0-9]+)/i
+            ]);
+
+            let shippingLine = buscar(texto, [
+              /EXPORTING CARRIER\s*(.*?)\s*PORT OF LOADING/i,
+              /DOMESTIC ROUTING\/EXPORT INSTRUCTIONS\s*(.*?)\s*Prepaid/i
+            ]);
+
+            if (/maersk/i.test(shippingLine)) shippingLine = "Maersk A/S";
+
+            let origin = buscar(texto, [
+              /PORT OF LOADING \/EXPORT\s*(.*?)\s*LOADING PIER/i
+            ]);
+
+            let destination = buscar(texto, [
+              /FOREIGN PORT OF UNLOADING\s*(.*?)\s*PLACE OF DELIVERY/i
+            ]);
+
+            if (/wilmington/i.test(origin)) origin = "ILM Wilmington";
+            if (/rio haina/i.test(destination)) destination = "HAI Rio Haina";
+
+            const container = buscar(texto, [
+              /CTR #:\s*([A-Z]{4}\d{7})/i
+            ]);
+
+            const seal = buscar(texto, [
+              /Seal #:\s*([A-Z0-9]+)/i
+            ]);
+
+            const tempRec = buscar(texto, [
+              /Temp Rec #:\s*([A-Z0-9]+)/i
+            ]);
+
+            const cases = buscar(texto, [
+              /(\d+)\s*Cases\s*Reefer/i
+            ]);
+
+            const description = buscar(texto, [
+              /Temp Rec #:\s*[A-Z0-9]+\s*(.*?)\s*ITN:/i,
+              /Seal #:\s*[A-Z0-9]+\s*(.*?)\s*ITN:/i
+            ]);
+
+            let pesoKg = buscar(texto, [
+              /(26,462\.53)\s*Kg/i,
+              /(\d{1,3}(?:,\d{3})*\.\d{2})\s*Kg\s*CTR #:/i,
+              /(\d{1,3}(?:,\d{3})*\.\d{2})\s*Kg/i
+            ]);
+
+            const containerConSalto = container ? container.replace(/(\d{4})(\d{3})$/, "$1\n$2") : "";
+
+            llenarCampo("reference", reference);
+            llenarCampo("to", consignee);
+            llenarCampo("from", exporter);
+            llenarCampo("obl", obl);
+            llenarCampo("voyage", voyage);
+            llenarCampo("shippingLine", shippingLine);
+            llenarCampo("origin", origin);
+            llenarCampo("destination", destination);
+            llenarCampo("goods", consignee + (container ? " - " + container : ""));
+            llenarCampo("packs", container ? "1" : "");
+            llenarCampo("weight", pesoKg ? pesoKg + " KG" : "");
+            llenarCampo("volume", "0.00 CBM");
+            llenarCampo("qty", container ? "1" : "");
+            llenarCampo("packageType", "40' Reefer\nContainer");
+            llenarCampo("container", containerConSalto);
+            llenarCampo("detailVolume", "CBM");
+            llenarCampo("detailWeight", pesoKg ? pesoKg + " KG" : "");
+            llenarCampo("description", description);
+
+            let marks = "";
+            if (cases) marks += cases + " CASES";
+            if (seal) marks += "\n\nSeal #: " + seal;
+            if (tempRec) marks += "\nTemp Rec #: " + tempRec;
+
+            llenarCampo("marks", marks.trim());
+
+            llenarSujetoCorreo(consignee, documentNumber, hblNumber, container);
+
+            actualizarAviso();
+            setStatus("PDF leído correctamente. Reference tomado de Freight Load Id.");
+          } catch (errorInterno) {
+            console.error(errorInterno);
+            setStatus("Error leyendo el contenido del PDF: " + errorInterno.message);
+          }
+        };
+
+        reader.readAsArrayBuffer(file);
+      } catch (error) {
+        console.error(error);
+        setStatus("Error leyendo PDF: " + error.message);
+      }
+    }
+
+    function cargarEjemplo() {
+      llenarCampo("topMessage", "Por favor, verificar el BL adjunto y confirmarnos si está correcto para poder proceder.");
+      llenarCampo("to", "Suplidora de Carnes A&B");
+      llenarCampo("from", "QUIRCH FOODS LLC");
+      llenarCampo("reference", "FL: 226477");
+      llenarCampo("obl", "268942380");
+      llenarCampo("arrivalDate", "2026-05-18");
+      llenarCampo("voyage", "617S");
+      llenarCampo("shippingLine", "Maersk A/S");
+      llenarCampo("origin", "ILM Wilmington");
+      llenarCampo("destination", "HAI Rio Haina");
+      llenarCampo("goods", "Suplidora de Carnes A&B - MMAU1265143");
+      llenarCampo("packs", "1");
+      llenarCampo("weight", "26,462.53 KG");
+      llenarCampo("volume", "0.00 CBM");
+      llenarCampo("qty", "1");
+      llenarCampo("packageType", "40' Reefer\nContainer");
+      llenarCampo("container", "MMAU126514\n3");
+      llenarCampo("detailVolume", "CBM");
+      llenarCampo("detailWeight", "26,462.53 KG");
+      llenarCampo("description", "Frzn Pork Loin\nCvp 10-14 LB");
+      llenarCampo("marks", "720 CASES\n\nSeal #: 0867459\nTemp Rec #: AKP1XL");
+      llenarCampo("trackingLink", "https://www.maersk.com/tracking/268942380");
+
+      llenarSujetoCorreo(
+        "Suplidora de Carnes A&B",
+        "268942380",
+        "ILMHAI226477A",
+        "MMAU1265143"
+      );
+
+      actualizarAviso();
+    }
+
+    function limpiarCampos() {
+      const campos = [
+        "emailSubject", "trackingLink",
+        "to", "from", "reference", "obl", "arrivalDate", "voyage",
+        "shippingLine", "origin", "destination", "goods", "packs",
+        "weight", "volume", "qty", "packageType", "container",
+        "detailVolume", "detailWeight", "description", "marks"
+      ];
+
+      campos.forEach(id => llenarCampo(id, ""));
+
+      llenarCampo("volume", "0.00 CBM");
+      llenarCampo("detailVolume", "CBM");
+
+      actualizarAviso();
+      setStatus("Campos limpiados.");
+    }
+
+    const camposAuto = [
+      "topMessage", "to", "from", "reference", "obl", "arrivalDate",
+      "voyage", "shippingLine", "origin", "destination", "goods",
+      "packs", "weight", "volume", "qty", "packageType", "container",
+      "detailVolume", "detailWeight", "description", "marks", "trackingLink"
+    ];
+
+    camposAuto.forEach(id => {
+      const campo = el(id);
+      if (campo) {
+        campo.addEventListener("input", actualizarAviso);
+        campo.addEventListener("change", actualizarAviso);
+      }
+    });
+
+    const campoSujeto = el("emailSubject");
+
+    if (campoSujeto) {
+      campoSujeto.addEventListener("input", ajustarAltoSujeto);
+    }
+
+    actualizarAviso();
+    ajustarAltoSujeto();
+  </script>
+</body>
+</html>
