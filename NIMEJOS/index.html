@@ -26,9 +26,6 @@
       background: #0f1115;
     }
 
-    /* =========================================
-       PANEL IZQUIERDO (HERRAMIENTAS MODERNAS)
-       ========================================= */
     aside {
       background: #090b0f;
       border-right: 1px solid #1f2533;
@@ -37,7 +34,7 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
     aside::-webkit-scrollbar { width: 6px; }
@@ -45,7 +42,7 @@
     aside::-webkit-scrollbar-thumb { background: #2a3142; border-radius: 10px; }
     aside::-webkit-scrollbar-thumb:hover { background: #3d475c; }
 
-    .app-header { margin-bottom: 8px; }
+    .app-header { margin-bottom: 4px; }
 
     h1 {
       margin: 0;
@@ -73,17 +70,37 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
 
-    h2 {
-      font-size: 14px;
-      margin: 0 0 18px 0;
-      color: #ffffff;
+    details.panel-card {
+      padding: 0;
+    }
+    
+    details.panel-card summary {
+      padding: 18px 22px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       font-weight: 700;
+      color: #ffffff;
+      font-size: 14px;
+      border-radius: 14px;
+      user-select: none;
+    }
+
+    details.panel-card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    details.panel-card summary h2 {
+      margin: 0;
+      font-size: 14px;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    h2::before {
+    details.panel-card summary h2::before {
       content: '';
       display: block;
       width: 10px;
@@ -92,57 +109,163 @@
       border-radius: 50%;
     }
 
+    details.panel-card summary::after {
+      content: '▼';
+      color: #3f7cff;
+      font-size: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    details.panel-card[open] summary::after {
+      transform: rotate(180deg);
+      color: #6bb3ff;
+    }
+
+    details.panel-card[open] summary {
+      border-bottom: 1px solid #1e2433;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+
+    .panel-content {
+      padding: 22px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #1e2433;
+      margin: 16px 0;
+    }
+
     .input-group { margin-bottom: 16px; }
     .input-group:last-child { margin-bottom: 0; }
     .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
     .row .input-group { margin-bottom: 0; }
 
     label {
-      display: block; font-size: 12.5px; color: #9fb7d6;
-      margin-bottom: 6px; font-weight: 600;
+      display: block;
+      font-size: 12.5px;
+      color: #9fb7d6;
+      margin-bottom: 6px;
+      font-weight: 600;
     }
 
     input, textarea, select {
-      width: 100%; background: #0b0d13; color: #f4f7fb;
-      border: 1px solid #232b3d; border-radius: 8px;
-      padding: 11px 14px; font-size: 13.5px; font-family: inherit; outline: none;
+      width: 100%;
+      background: #0b0d13;
+      color: #f4f7fb;
+      border: 1px solid #232b3d;
+      border-radius: 8px;
+      padding: 11px 14px;
+      font-size: 13.5px;
+      font-family: inherit;
+      outline: none;
     }
 
     input[type="date"] { color-scheme: dark; }
     textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+
     input:focus, textarea:focus, select:focus {
       border-color: #3f7cff;
       box-shadow: 0 0 0 3px rgba(63, 124, 255, 0.15);
     }
 
     input[type="file"] {
-      padding: 8px; background: rgba(63, 124, 255, 0.05);
-      border: 1px dashed #3f7cff; color: #9fb7d6; cursor: pointer;
+      padding: 8px;
+      background: rgba(63, 124, 255, 0.05);
+      border: 1px dashed #3f7cff;
+      color: #9fb7d6;
+      cursor: pointer;
     }
 
     button {
-      width: 100%; border: none; border-radius: 8px; padding: 12px 16px;
-      cursor: pointer; font-weight: 600; color: #ffffff; font-size: 14px;
-      background: #3f7cff; display: flex; justify-content: center; align-items: center; gap: 8px;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 14px;
+      background: #3f7cff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
     }
+
     button:hover { background: #2b61d4; }
-    button svg { width: 18px; height: 18px; fill: currentColor; }
-    button.secondary { background: #2a3142; }
-    button.danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
-    button.copy { background: #10b981; font-size: 15px; padding: 14px; margin-bottom: 8px; }
-    .button-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    button.secondary { background: #2a3142; color: #e2e8f0; }
+    button.secondary:hover { background: #364054; }
+
+    button.danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    button.danger:hover {
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    button.copy {
+      background: #10b981;
+      font-size: 15px;
+      padding: 14px;
+    }
+
+    button.copy:hover { background: #059669; }
+    
+    .dropdown-container {
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .dropdown-btn {
+      background: #1e2433;
+      border: 1px solid #2a3142;
+      color: #9fb7d6;
+      font-size: 13px;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #12161f;
+      border: 1px solid #2a3142;
+      border-radius: 8px;
+      margin-top: 5px;
+      padding: 8px;
+      z-index: 100;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .dropdown-content.show {
+      display: flex;
+    }
 
     .status {
-      margin-top: 16px; padding: 14px; border-radius: 8px; background: rgba(63, 124, 255, 0.08);
-      color: #6bb3ff; font-size: 13px; border: 1px solid rgba(63, 124, 255, 0.2);
+      margin-top: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      background: rgba(63, 124, 255, 0.08);
+      color: #6bb3ff;
+      font-size: 12px;
+      border: 1px solid rgba(63, 124, 255, 0.2);
+      display: none;
     }
-    .tools-box small { display: block; margin-top: 10px; color: #8f9bad; font-size: 12px; line-height: 1.4; }
 
-    /* =========================================
-       PANEL DERECHO (ENTORNO CLARO)
-       ========================================= */
+    .status.active { display: block; }
+
     main {
-      background: #e9ecef; /* Fondo gris claro fuera de la hoja */
+      background: #e9ecef;
       padding: 30px;
       overflow: auto;
       display: flex;
@@ -161,17 +284,24 @@
     }
 
     .email-subject-wrap textarea {
-      display: block; width: 100%; min-height: 42px;
-      background: #f8f9fa; color: #0056b3; border: 1px solid #dee2e6;
-      border-radius: 6px; padding: 10px 14px; font-size: 14.5px; font-weight: 700;
-      outline: none; font-family: Arial, sans-serif;
+      display: block;
+      width: 100%;
+      min-height: 42px;
+      background: #f8f9fa;
+      color: #0056b3;
+      border: 1px solid #dee2e6;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 14.5px;
+      font-weight: 700;
+      outline: none;
+      font-family: Arial, sans-serif;
     }
 
-    /* La "Hoja de papel" */
     #notice {
-      width: 800px; /* Ancho fijo para emular documento */
-      background-color: #ffffff; /* FONDO BLANCO PURO PARA OUTLOOK */
-      color: #333333; /* Texto oscuro corporativo */
+      width: 800px;
+      background-color: #ffffff;
+      color: #333333;
       padding: 40px;
       font-family: Arial, Helvetica, sans-serif;
       box-sizing: border-box;
@@ -179,15 +309,14 @@
       border: 1px solid #ced4da;
     }
 
-    /* Ocultar elementos en impresión */
     @media print {
       @page { margin-top: 0; margin-bottom: 0; }
       aside { display: none; }
       .app { display: block; }
       main { padding: 0; background: white; }
       .email-subject-wrap { display: none; }
-      #notice { box-shadow: none; border: none; padding: 20px; }
-      #vTrackingBtnContainer { display: none !important; }
+      #notice { box-shadow: none; border: none; padding: 20px; width: 100%; }
+      #warningContainer { display: none !important; }
     }
   </style>
 </head>
@@ -197,108 +326,108 @@
     <aside>
       <div class="app-header">
         <h1>Creador de Avisos</h1>
-        <p class="subtitle">Herramienta de generación automática</p>
+        <p class="subtitle">Generador para Outlook</p>
       </div>
 
-      <div class="panel-card">
-        <h2>1. Cargar Documento BL</h2>
+      <div class="panel-card" style="border-color: #3f7cff; box-shadow: 0 0 20px rgba(63,124,255,0.1);">
         <div class="input-group">
-          <input type="file" id="pdfFile" accept="application/pdf" />
+          <label style="color: #6bb3ff;">1. Subir BL para autocompletar</label>
+          <input type="file" id="pdfFile" accept="application/pdf" onchange="leerPDF()" />
         </div>
-        <button onclick="leerPDF()">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM18 20H6V4h5v6h6v10z"/></svg>
-          Leer BL
-        </button>
-        <div id="status" class="status">Esperando PDF...</div>
-      </div>
 
-      <div class="panel-card">
-        <h2>2. Encabezado</h2>
         <div class="input-group">
-          <label>Mensaje superior</label>
-          <textarea id="topMessage">Por favor, verificar el BL adjunto y confirmarnos si está correcto para poder proceder.</textarea>
-        </div>
-        <div class="row">
-          <div class="input-group"><label>To</label><input id="to" /></div>
-          <div class="input-group"><label>From</label><input id="from" /></div>
-        </div>
-      </div>
+  <label style="color: #6bb3ff;">Fecha de llegada</label>
+  <input id="arrivalDate" type="date" />
+</div>
 
-      <div class="panel-card">
-        <h2>3. Datos principales</h2>
-        <div class="row">
-          <div class="input-group"><label>Reference</label><input id="reference" placeholder="Ej.: FL: 226477" /></div>
-          <div class="input-group"><label>OBL</label><input id="obl" /></div>
-        </div>
-        <div class="input-group">
-          <label>Date of Arrival</label>
-          <input id="arrivalDate" type="date" />
-        </div>
-        <div class="input-group">
-          <label>Goods</label>
-          <textarea id="goods"></textarea>
-        </div>
-        <div class="row">
-          <div class="input-group"><label>Voyage Number</label><input id="voyage" /></div>
-          <div class="input-group"><label>No. of pack.</label><input id="packs" /></div>
-        </div>
-        <div class="row">
-          <div class="input-group"><label>Shipping line</label><input id="shippingLine" /></div>
-          <div class="input-group"><label>Weight</label><input id="weight" /></div>
-        </div>
-        <div class="row">
-          <div class="input-group"><label>Origin</label><input id="origin" /></div>
-          <div class="input-group"><label>Volume</label><input id="volume" /></div>
-        </div>
-        <div class="input-group">
-          <label>Destination</label>
-          <input id="destination" />
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <h2>4. Freight Details</h2>
-        <div class="row">
-          <div class="input-group"><label>QTY</label><input id="qty" /></div>
-          <div class="input-group"><label>Volume detalle</label><input id="detailVolume" /></div>
-        </div>
-        <div class="input-group"><label>Package Type</label><textarea id="packageType"></textarea></div>
-        <div class="input-group"><label>Container #</label><textarea id="container"></textarea></div>
-        <div class="input-group"><label>Weight detalle</label><textarea id="detailWeight"></textarea></div>
-        <div class="input-group"><label>Description</label><textarea id="description"></textarea></div>
-        <div class="input-group"><label>Marks & Numbers</label><textarea id="marks"></textarea></div>
-      </div>
-
-      <div class="panel-card">
-        <h2>5. Opciones Extras</h2>
-        <div class="input-group">
-          <label>Link de Rastreo (Opcional)</label>
-          <input id="trackingLink" placeholder="Ej: https://www.cmacgm.com/tracking..." />
-        </div>
-      </div>
-
-      <div class="panel-card">
-        <h2>6. Acciones y Herramientas</h2>
+        <div id="status" class="status"></div>
+        
+        <div class="divider"></div>
+        
         <button class="copy" onclick="copiarAvisoCompleto()">
-          <svg viewBox="0 0 24 24"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
-          Copiar aviso completo
+          📋 COPIAR AVISO COMPLETO
         </button>
-        <div class="button-grid">
-          <button class="danger" onclick="limpiarCampos()">Limpiar</button>
-          <button class="secondary" onclick="window.print()">Imprimir PDF</button>
+        
+        <div class="dropdown-container">
+          <button class="dropdown-btn" onclick="toggleDropdown()">⚙️ Opciones extras ▼</button>
+          <div class="dropdown-content" id="extrasMenu">
+            <button class="secondary" onclick="window.print()">🖨️ Imprimir como PDF</button>
+            <button class="secondary" onclick="cargarEjemplo()">📝 Cargar un ejemplo</button>
+            <button class="danger" onclick="limpiarCampos()">🧹 Limpiar todos los datos</button>
+          </div>
         </div>
-        <button class="secondary" onclick="cargarEjemplo()">Cargar ejemplo</button>
       </div>
 
-      <div class="panel-card tools-box">
-        <h2>Herramientas Adicionales</h2>
-        <div class="input-group">
-          <label>Cargar Logo Definitivo (OBLIGATORIO)</label>
-          <input type="file" id="logoFile" accept="image/*" />
+      <details class="panel-card" open>
+        <summary><h2>2. Encabezado</h2></summary>
+        <div class="panel-content">
+          <div class="input-group">
+            <label>Mensaje superior (Alerta Roja)</label>
+            <textarea id="topMessage" placeholder="Si dejas esto en blanco, el recuadro rojo no saldrá en el correo.">Por favor, verificar el BL adjunto y confirmarnos si está correcto para poder proceder.</textarea>
+          </div>
+          <div class="row">
+            <div class="input-group"><label>To</label><input id="to" /></div>
+            <div class="input-group"><label>From</label><input id="from" /></div>
+          </div>
         </div>
-        <button class="secondary" onclick="cargarLogoDesdeArchivo()">Convertir y Cargar logo</button>
-        <small>Si no cargas el logo por aquí, Outlook lo mostrará como una "X" roja.</small>
-      </div>
+      </details>
+
+      <details class="panel-card">
+        <summary><h2>3. Datos principales</h2></summary>
+        <div class="panel-content">
+          <div class="row">
+            <div class="input-group"><label>Reference</label><input id="reference" placeholder="Ej.: FL: 226477" /></div>
+            <div class="input-group"><label>OBL</label><input id="obl" /></div>
+          </div>
+          <div class="input-group">
+            <label>Goods</label>
+            <textarea id="goods"></textarea>
+          </div>
+          <div class="row">
+            <div class="input-group"><label>Voyage Number</label><input id="voyage" /></div>
+            <div class="input-group"><label>No. of pack.</label><input id="packs" /></div>
+          </div>
+          <div class="row">
+            <div class="input-group"><label>Shipping line</label><input id="shippingLine" /></div>
+            <div class="input-group"><label>Weight</label><input id="weight" /></div>
+          </div>
+          <div class="row">
+            <div class="input-group"><label>Origin</label><input id="origin" /></div>
+            <div class="input-group"><label>Volume</label><input id="volume" /></div>
+          </div>
+          <div class="input-group">
+            <label>Destination</label>
+            <input id="destination" />
+          </div>
+        </div>
+      </details>
+
+      <details class="panel-card">
+        <summary><h2>4. Freight Details</h2></summary>
+        <div class="panel-content">
+          <div class="row">
+            <div class="input-group"><label>QTY</label><input id="qty" /></div>
+            <div class="input-group"><label>Volume detalle</label><input id="detailVolume" /></div>
+          </div>
+          <div class="input-group"><label>Package Type</label><textarea id="packageType"></textarea></div>
+          <div class="input-group"><label>Container #</label><textarea id="container"></textarea></div>
+          <div class="input-group"><label>Weight detalle</label><textarea id="detailWeight"></textarea></div>
+          <div class="input-group"><label>Description</label><textarea id="description"></textarea></div>
+          <div class="input-group"><label>Marks & Numbers</label><textarea id="marks"></textarea></div>
+        </div>
+      </details>
+
+      <details class="panel-card">
+        <summary><h2>5. Configuración de Logo</h2></summary>
+        <div class="panel-content">
+          <div class="input-group">
+            <label>Cargar Logo Definitivo</label>
+            <input type="file" id="logoFile" accept="image/*" />
+          </div>
+          <button class="secondary" onclick="cargarLogoDesdeArchivo()">Convertir y Cargar logo</button>
+          <small style="color: #ff745f;">* Necesario para que Outlook no bloquee la imagen.</small>
+        </div>
+      </details>
     </aside>
 
     <main>
@@ -307,62 +436,68 @@
       </div>
 
       <div id="notice">
-        
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px; border-bottom: 2px solid #0056b3; padding-bottom: 20px;">
           <tr>
             <td width="260" valign="middle" align="left">
-               <img id="logoImg" src="./logo3944.jpg" width="250" alt="NIMEJOS Logo" style="display: block; border: 0;">
+              <img id="logoImg" src="./logo3944.jpg" width="250" alt="NIMEJOS Logo" style="display: block; border: 0;">
             </td>
             <td valign="middle" align="left" style="border-left: 2px solid #0056b3; padding-left: 20px; font-size: 13.5px; line-height: 1.6; color: #555555; font-family: Arial, sans-serif;">
-               <strong>NIMEJOS LOGÍSTICA</strong><br>
-               Ave. Romulo Betancourt, No. 1852<br>
-               Torre Empresarial RT, Suite 703<br>
-               Mirador Sur, Distrito Nacional<br>
-               Dominican Republic
+              <strong>LOGÍSTICAS Y SERVICIOS NIMEJOS</strong><br>
+              Ave. Romulo Betancourt, No. 1852<br>
+              Torre Empresarial RT, Suite 703<br>
+              Mirador Sur, Distrito Nacional<br>
+              Dominican Republic
             </td>
           </tr>
         </table>
 
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
-          <tr>
-            <td style="background-color: #fff3f3; border-left: 4px solid #dc3545; color: #dc3545; font-weight: bold; padding: 14px 18px; font-size: 15px; font-family: Arial, sans-serif;" id="vTopMessage">
-            </td>
-          </tr>
-        </table>
+        <!-- BLOQUE SUPERIOR ORGANIZADO PARA OUTLOOK -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 22px; font-family: Arial, Helvetica, sans-serif;">
+  <tr>
+    <td>
 
-        <table width="100%" cellpadding="15" cellspacing="0" border="0" style="background-color: #f8f9fa; border: 1px solid #dee2e6; margin-bottom: 25px; font-family: Arial, sans-serif;">
-          <tr>
-            <td style="font-size: 14.5px; color: #333333; line-height: 1.8;">
-              <span style="color: #6c757d; font-weight: bold; font-size: 13px;">TO :</span> <strong style="color: #0056b3;" id="vTo"></strong><br>
-              <span style="color: #6c757d; font-weight: bold; font-size: 13px;">FROM :</span> <strong id="vFrom"></strong>
-            </td>
-          </tr>
-        </table>
+      <div id="warningContainer"></div>
 
-        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 20px;">
-          <tr>
-            <td valign="middle">
-              <h2 style="margin: 0; color: #0056b3; font-size: 20px; font-weight: bold; border-left: 5px solid #0056b3; padding-left: 12px; font-family: Arial, sans-serif; text-transform: uppercase;">
-                ARRIVAL NOTICE
-              </h2>
-            </td>
-            <td valign="middle" align="right" id="vTrackingBtnContainer" style="display: none;">
-              <table border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td align="center" bgcolor="#0056b3" style="border-radius: 4px;">
-                    <a id="vTrackingBtn" href="#" target="_blank" style="font-size: 13px; font-family: Arial, sans-serif; color: #ffffff; text-decoration: none; font-weight: bold; padding: 12px 18px; display: block; border: 1px solid #0056b3; text-transform: uppercase;">
-                      📍 Rastrear Carga
-                    </a>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin-bottom: 18px;">
+        <tr>
+          <td style="background-color: #f8f9fa; border: 1px solid #d9e0e7; padding: 14px 18px; font-family: Arial, Helvetica, sans-serif;">
+            <div style="font-size: 13px; line-height: 1.7; color: #333333;">
+              <span style="color: #6c757d; font-weight: bold;">TO :</span>
+              <strong style="color: #0056b3;" id="vTo"></strong>
+              <br>
+              <span style="color: #6c757d; font-weight: bold;">FROM :</span>
+              <strong style="color: #333333;" id="vFrom"></strong>
+            </div>
+          </td>
+        </tr>
+      </table>
 
-        <p style="font-size: 14.5px; margin: 20px 0; color: #555555; line-height: 1.6; font-family: Arial, sans-serif;">
-          Good day,<br><br>Following please find details of your shipment arrival as follows:
-        </p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin-bottom: 14px;">
+        <tr>
+          <td style="border-left: 5px solid #0056b3; padding-left: 14px; font-family: Arial, Helvetica, sans-serif;">
+            <div style="color: #0056b3; font-size: 24px; line-height: 1.2; font-weight: bold; text-transform: uppercase; letter-spacing: 0.2px;">
+              ARRIVAL NOTICE
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin-bottom: 24px;">
+        <tr>
+          <td style="background-color: #f6f8fa; border-left: 5px solid #0056b3; padding: 14px 18px; font-family: Arial, Helvetica, sans-serif;">
+            <div style="color: #0056b3; font-size: 15px; line-height: 1.4; font-weight: bold; margin-bottom: 4px;">
+              Dear Valued Client,
+            </div>
+            <div style="color: #4f5965; font-size: 13.5px; line-height: 1.55;">
+              Please find below the arrival details for your shipment. Kindly review and confirm if everything is correct.
+            </div>
+          </td>
+        </tr>
+      </table>
+
+    </td>
+  </tr>
+</table>
 
         <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0; background-color: #f8f9fa; border: 1px solid #dee2e6; font-family: Arial, sans-serif;">
           <tr>
@@ -432,7 +567,7 @@
             <tr>
               <td id="vQty" align="right" valign="top" style="color: #198754; font-weight: bold; border: 1px solid #dee2e6;"></td>
               <td id="vPackageType" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
-              <td id="vContainer" valign="top" style="color: #0056b3; font-weight: bold; border: 1px solid #dee2e6; white-space: pre-line;"></td>
+              <td id="vContainer" valign="top" style="color: #0056b3; font-weight: bold; border: 1px solid #dee2e6; white-space: nowrap; word-break: keep-all;"></td>
               <td id="vDetailVolume" align="right" valign="top" style="color: #333333; border: 1px solid #dee2e6;"></td>
               <td id="vDetailWeight" align="right" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
               <td id="vDescription" valign="top" style="color: #333333; border: 1px solid #dee2e6; white-space: pre-line;"></td>
@@ -441,7 +576,7 @@
           </tbody>
         </table>
       </div>
-      </main>
+    </main>
   </div>
 
   <script>
@@ -454,7 +589,24 @@
 
     function setStatus(texto) {
       const status = el("status");
-      if (status) status.textContent = texto;
+      if (status) {
+        status.textContent = texto;
+        status.classList.add("active");
+        setTimeout(() => status.classList.remove("active"), 5000);
+      }
+    }
+
+    function toggleDropdown() {
+      document.getElementById("extrasMenu").classList.toggle("show");
+    }
+
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropdown-btn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+          if (dropdowns[i].classList.contains('show')) dropdowns[i].classList.remove('show');
+        }
+      }
     }
 
     function ajustarAltoSujeto() {
@@ -468,9 +620,7 @@
       const campo = el(id);
       if (campo) {
         campo.value = texto || "";
-        if (id === "emailSubject") {
-          setTimeout(ajustarAltoSujeto, 0);
-        }
+        if (id === "emailSubject") setTimeout(ajustarAltoSujeto, 0);
       }
     }
 
@@ -482,7 +632,6 @@
           else existente.addEventListener("load", resolve, { once: true });
           return;
         }
-
         const script = document.createElement("script");
         script.src = src;
         script.onload = () => { script.dataset.loaded = "true"; resolve(); };
@@ -498,15 +647,11 @@
 
     function cargarLogoDesdeArchivo() {
       const file = el("logoFile").files[0];
-      if (!file) {
-        setStatus("Seleccione el archivo del logo primero.");
-        return;
-      }
-
+      if (!file) { setStatus("Seleccione el archivo del logo primero."); return; }
       const reader = new FileReader();
       reader.onload = function () {
         el("logoImg").src = reader.result;
-        setStatus("Logo convertido correctamente. ¡Ahora SÍ se verá en Outlook!");
+        setStatus("Logo convertido correctamente.");
       };
       reader.readAsDataURL(file);
     }
@@ -542,13 +687,9 @@
     function construirSujetoCorreo(consignatario, bl, hbl, contenedor) {
       return "ARRIVAL NOTICE ( " +
         (consignatario || "") +
-        " // BL. " +
-        (bl || "") +
-        " // HBL. " +
-        (hbl || "") +
-        " // CONT. " +
-        (contenedor || "") +
-        " )";
+        " // BL. " + (bl || "") +
+        " // HBL. " + (hbl || "") +
+        " // CONT. " + (contenedor || "") + " )";
     }
 
     function llenarSujetoCorreo(consignatario, bl, hbl, contenedor) {
@@ -564,7 +705,24 @@
     }
 
     function actualizarAviso() {
-      poner("vTopMessage", valor("topMessage"));
+      const topMsg = valor("topMessage").trim();
+      const warningContainer = el("warningContainer");
+
+      if (topMsg !== "") {
+  warningContainer.innerHTML = `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse: collapse; margin-bottom: 16px;">
+      <tr>
+        <td style="background-color: #fff1f2; border-left: 5px solid #dc3545; padding: 13px 18px; font-family: Arial, Helvetica, sans-serif;">
+          <div style="color: #dc3545; font-size: 14px; line-height: 1.45; font-weight: bold;">
+            ${topMsg}
+          </div>
+        </td>
+      </tr>
+    </table>`;
+} else {
+  warningContainer.innerHTML = "";
+}
+
       poner("vTo", valor("to"));
       poner("vFrom", valor("from"));
       poner("vReference", valor("reference"));
@@ -585,46 +743,24 @@
       poner("vDetailWeight", valor("detailWeight"));
       poner("vDescription", valor("description"));
       poner("vMarks", valor("marks"));
-      
-      // Control del Botón de Rastreo para Outlook
-      const trackLink = valor("trackingLink").trim();
-      const trackContainer = el("vTrackingBtnContainer");
-      const trackBtn = el("vTrackingBtn");
-      
-      if (trackLink !== "") {
-        trackBtn.href = trackLink;
-        trackContainer.style.display = "table-cell"; // Para que respete el TD
-      } else {
-        trackBtn.href = "#";
-        trackContainer.style.display = "none";
-      }
     }
 
     function prepararHTMLParaOutlook(aviso) {
-      // Tomamos el HTML interior, que ya está puramente estructurado para correo
-      return aviso.innerHTML;
-    }
+  return `
+    <div style="width:800px; background-color:#ffffff; font-family: Arial, Helvetica, sans-serif; color:#333333;">
+      ${aviso.innerHTML}
+    </div>
+  `;
+}
 
     async function copiarAvisoCompleto() {
       try {
         actualizarAviso();
-
         const aviso = el("notice");
-        if (!aviso) {
-          setStatus("No se encontró el aviso para copiar.");
-          return;
-        }
-
-        const logo = el("logoImg");
-        if (logo && !logo.src.startsWith("data:image")) {
-          setStatus("⚠️ IMPORTANTE: Recuerde usar el botón 'Cargar Logo Definitivo' en la barra izquierda para que el logo se adjunte correctamente.");
-        } else {
-          setStatus("Preparando aviso corporativo...");
-        }
+        if (!aviso) { setStatus("No se encontró el aviso para copiar."); return; }
 
         const htmlFinal = prepararHTMLParaOutlook(aviso);
         const textoPlano = aviso.innerText || aviso.textContent || "";
-
         let copiado = false;
 
         try {
@@ -639,7 +775,6 @@
           }
         } catch (errorClipboard) {
           console.warn("Clipboard moderno falló:", errorClipboard);
-          copiado = false;
         }
 
         if (!copiado) {
@@ -648,10 +783,11 @@
           contenedor.style.position = "fixed";
           contenedor.style.left = "-99999px";
           contenedor.innerHTML = htmlFinal;
-
           document.body.appendChild(contenedor);
+
           const range = document.createRange();
           range.selectNodeContents(contenedor);
+
           const selection = window.getSelection();
           selection.removeAllRanges();
           selection.addRange(range);
@@ -662,12 +798,9 @@
           document.body.removeChild(contenedor);
         }
 
-        if (copiado) {
-          setStatus("✅ ¡Copiado con éxito! Ve a Outlook y pégalo (Ctrl+V).");
-          return;
-        }
-
-        setStatus("No se pudo copiar. Intente en Edge o Chrome.");
+        setStatus(copiado
+          ? "✅ ¡Copiado! Ve a Outlook y pega con Ctrl+V."
+          : "No se pudo copiar. Intente en Edge o Chrome.");
       } catch (error) {
         console.error(error);
         setStatus("Error copiando aviso: " + error.message);
@@ -679,10 +812,7 @@
         await asegurarPDFJS();
 
         const file = el("pdfFile").files[0];
-        if (!file) {
-          setStatus("Seleccione un PDF primero.");
-          return;
-        }
+        if (!file) { setStatus("Seleccione un PDF primero."); return; }
 
         setStatus("Leyendo PDF...");
 
@@ -694,7 +824,6 @@
             const pdf = await pdfjsLib.getDocument({ data: typedarray }).promise;
 
             let texto = "";
-
             for (let i = 1; i <= pdf.numPages; i++) {
               const page = await pdf.getPage(i);
               const content = await page.getTextContent();
@@ -702,7 +831,7 @@
             }
 
             texto = limpiarTexto(texto);
-            console.log(texto);
+            console.log("[PDF texto]:", texto);
 
             const freightLoadId = buscar(texto, [
               /Freight Load Id:\s*([A-Z0-9-]+)/i,
@@ -722,7 +851,7 @@
               /NOTIFY PARTY .*?\)\s*(.*?)\s*DOMESTIC ROUTING/i
             ]);
 
-            const exporter = nombreQuirchSolo(exporterCompleto);
+            const exporter  = nombreQuirchSolo(exporterCompleto);
             const consignee = nombreClienteSolo(consigneeCompleto);
 
             const documentNumber = buscar(texto, [
@@ -743,12 +872,22 @@
               /VOYAGE\s*([A-Z0-9]+)/i
             ]);
 
-            let shippingLine = buscar(texto, [
+            const container = buscar(texto, [
+              /CTR #:\s*([A-Z]{4}\d{7})/i,
+              /CONTAINER\s*[#:]\s*([A-Z]{4}\d{7})/i,
+              /([A-Z]{4}\d{7})/
+            ]);
+
+            let shippingLineRaw = buscar(texto, [
               /EXPORTING CARRIER\s*(.*?)\s*PORT OF LOADING/i,
+              /CARRIER\s*[:#]?\s*(.*?)\s*(?:PORT|VOYAGE)/i,
               /DOMESTIC ROUTING\/EXPORT INSTRUCTIONS\s*(.*?)\s*Prepaid/i
             ]);
 
-            if (/maersk/i.test(shippingLine)) shippingLine = "Maersk A/S";
+            let shippingLine = shippingLineRaw;
+            if (/maersk/i.test(shippingLineRaw)) {
+              shippingLine = "Maersk A/S";
+            }
 
             let origin = buscar(texto, [
               /PORT OF LOADING \/EXPORT\s*(.*?)\s*LOADING PIER/i
@@ -760,10 +899,6 @@
 
             if (/wilmington/i.test(origin)) origin = "ILM Wilmington";
             if (/rio haina/i.test(destination)) destination = "HAI Rio Haina";
-
-            const container = buscar(texto, [
-              /CTR #:\s*([A-Z]{4}\d{7})/i
-            ]);
 
             const seal = buscar(texto, [
               /Seal #:\s*([A-Z0-9]+)/i
@@ -788,7 +923,7 @@
               /(\d{1,3}(?:,\d{3})*\.\d{2})\s*Kg/i
             ]);
 
-            const containerConSalto = container ? container.replace(/(\d{4})(\d{3})$/, "$1\n$2") : "";
+            const containerConSalto = container || "";
 
             llenarCampo("reference", reference);
             llenarCampo("to", consignee);
@@ -819,17 +954,18 @@
             llenarSujetoCorreo(consignee, documentNumber, hblNumber, container);
 
             actualizarAviso();
-            setStatus("PDF leído correctamente. Reference tomado de Freight Load Id.");
+            setStatus("✅ PDF leído correctamente.");
+
           } catch (errorInterno) {
             console.error(errorInterno);
-            setStatus("Error leyendo el contenido del PDF: " + errorInterno.message);
+            setStatus("Error leyendo el contenido del PDF.");
           }
         };
 
         reader.readAsArrayBuffer(file);
       } catch (error) {
         console.error(error);
-        setStatus("Error leyendo PDF: " + error.message);
+        setStatus("Error leyendo PDF.");
       }
     }
 
@@ -850,12 +986,11 @@
       llenarCampo("volume", "0.00 CBM");
       llenarCampo("qty", "1");
       llenarCampo("packageType", "40' Reefer\nContainer");
-      llenarCampo("container", "MMAU126514\n3");
+      llenarCampo("container", "MMAU1265143");
       llenarCampo("detailVolume", "CBM");
       llenarCampo("detailWeight", "26,462.53 KG");
       llenarCampo("description", "Frzn Pork Loin\nCvp 10-14 LB");
       llenarCampo("marks", "720 CASES\n\nSeal #: 0867459\nTemp Rec #: AKP1XL");
-      llenarCampo("trackingLink", "https://www.maersk.com/tracking/268942380");
 
       llenarSujetoCorreo(
         "Suplidora de Carnes A&B",
@@ -865,11 +1000,12 @@
       );
 
       actualizarAviso();
+      setStatus("Ejemplo cargado.");
     }
 
     function limpiarCampos() {
       const campos = [
-        "emailSubject", "trackingLink",
+        "emailSubject", "topMessage",
         "to", "from", "reference", "obl", "arrivalDate", "voyage",
         "shippingLine", "origin", "destination", "goods", "packs",
         "weight", "volume", "qty", "packageType", "container",
@@ -877,19 +1013,17 @@
       ];
 
       campos.forEach(id => llenarCampo(id, ""));
-
       llenarCampo("volume", "0.00 CBM");
       llenarCampo("detailVolume", "CBM");
-
       actualizarAviso();
-      setStatus("Campos limpiados.");
+      setStatus("🧹 Campos limpiados.");
     }
 
     const camposAuto = [
       "topMessage", "to", "from", "reference", "obl", "arrivalDate",
       "voyage", "shippingLine", "origin", "destination", "goods",
       "packs", "weight", "volume", "qty", "packageType", "container",
-      "detailVolume", "detailWeight", "description", "marks", "trackingLink"
+      "detailVolume", "detailWeight", "description", "marks"
     ];
 
     camposAuto.forEach(id => {
@@ -901,10 +1035,7 @@
     });
 
     const campoSujeto = el("emailSubject");
-
-    if (campoSujeto) {
-      campoSujeto.addEventListener("input", ajustarAltoSujeto);
-    }
+    if (campoSujeto) campoSujeto.addEventListener("input", ajustarAltoSujeto);
 
     actualizarAviso();
     ajustarAltoSujeto();
